@@ -9,6 +9,7 @@
   const Storage = window.MeowdokuStorage;
 
   const REGION_COLOR_COUNT = 8;
+  const DOUBLE_TAP_MS = 300;
 
   const boardEl = document.getElementById("board");
   const levelLabelEl = document.getElementById("level-label");
@@ -38,6 +39,12 @@
   let state = null;
   let cellEls = [];
   let timerInterval = null;
+  const pendingTaps = new Map();
+
+  function clearPendingTaps() {
+    for (const timer of pendingTaps.values()) clearTimeout(timer);
+    pendingTaps.clear();
+  }
 
   function formatTime(totalSeconds) {
     const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
@@ -98,7 +105,7 @@
           cell.classList.add("region-edge-bottom");
         }
 
-        cell.addEventListener("click", () => onCellClick(row, col));
+        cell.addEventListener("click", () => handleCellTap(row, col));
         boardEl.appendChild(cell);
         rowEls.push(cell);
       }
@@ -111,6 +118,11 @@
       for (let col = 0; col < currentPuzzle.size; col++) {
         const cell = cellEls[row][col];
         const value = state.cells[row][col];
+
+        // 変化したマスだけDOMを更新する（毎回全マス作り直すと
+        // ポップインアニメーションが無関係なマスまで再生されてしまうため）
+        if (cell.dataset.value === value) continue;
+        cell.dataset.value = value;
         cell.innerHTML = "";
 
         if (value === "cat") {
@@ -167,9 +179,33 @@
     gameoverOverlay.classList.add("hidden");
   }
 
-  function onCellClick(row, col) {
+  /** シングルタップとダブルタップを区別する（一定時間内の2回目のタップだけをダブルタップ扱いにする） */
+  function handleCellTap(row, col) {
     if (state.cleared || state.gameOver) return;
-    GameState.cycleCell(state, row, col);
+    const key = `${row},${col}`;
+    const pending = pendingTaps.get(key);
+
+    if (pending) {
+      clearTimeout(pending);
+      pendingTaps.delete(key);
+      handleDoubleTap(row, col);
+    } else {
+      const timer = setTimeout(() => {
+        pendingTaps.delete(key);
+        handleSingleTap(row, col);
+      }, DOUBLE_TAP_MS);
+      pendingTaps.set(key, timer);
+    }
+  }
+
+  function handleSingleTap(row, col) {
+    GameState.toggleCross(state, row, col);
+    render();
+    persistCurrentProgress();
+  }
+
+  function handleDoubleTap(row, col) {
+    GameState.toggleCat(state, row, col);
     render();
     persistCurrentProgress();
 
@@ -187,6 +223,7 @@
     persistCurrentProgress();
     hideClearModal();
     hideGameOverModal();
+    clearPendingTaps();
 
     currentPuzzle = getPuzzleById(id);
     const savedPuzzleState = savedData.puzzleStates[currentPuzzle.id];
@@ -236,6 +273,7 @@
   }
 
   undoBtn.addEventListener("click", () => {
+    clearPendingTaps();
     GameState.undo(state);
     render();
     persistCurrentProgress();
@@ -243,6 +281,7 @@
 
   resetBtn.addEventListener("click", () => {
     if (!window.confirm("Reset this puzzle?")) return;
+    clearPendingTaps();
     GameState.reset(state);
     render();
     persistCurrentProgress();
@@ -270,6 +309,7 @@
 
   gameoverRetryBtn.addEventListener("click", () => {
     hideGameOverModal();
+    clearPendingTaps();
     GameState.reset(state);
     render();
     persistCurrentProgress();

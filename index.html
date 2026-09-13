@@ -31,13 +31,19 @@
     </div>
 
     <footer class="app-footer">
-      <p>行・列・エリアに猫はちょうど1匹、猫同士は隣接禁止(斜め含む)</p>
+      <p>シングルタップ: × / ダブルタップ: 🐱　―　行・列・エリアに猫はちょうど1匹、猫同士は隣接禁止(斜め含む)</p>
     </footer>
   </div>
 
   <div id="clear-overlay" class="overlay hidden">
     <div class="modal clear-modal">
-      <div class="clear-cat" aria-hidden="true">🐱</div>
+      <div class="sparkles" aria-hidden="true">
+        <span class="sparkle">🐾</span>
+        <span class="sparkle">✨</span>
+        <span class="sparkle">🐾</span>
+        <span class="sparkle">✨</span>
+      </div>
+      <div class="clear-cat happy" aria-hidden="true">🐱</div>
       <h2>PURRFECT!</h2>
       <p id="clear-level-text">Level 01 Clear!</p>
       <div class="clear-stats">
@@ -59,7 +65,7 @@
 
   <div id="gameover-overlay" class="overlay hidden">
     <div class="modal clear-modal">
-      <div class="clear-cat" aria-hidden="true">😿</div>
+      <div class="clear-cat sad" aria-hidden="true">😿</div>
       <h2>GAME OVER</h2>
       <p>ミスが3回になっちゃった。もう一度挑戦してね。</p>
       <div class="modal-actions">

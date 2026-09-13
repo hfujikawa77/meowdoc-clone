@@ -5,7 +5,6 @@
 window.MeowdokuGameState = (function (Validator) {
   "use strict";
 
-  const NEXT_STATE = { empty: "cross", cross: "cat", cat: "empty" };
   const MAX_MISTAKES = 3;
 
   function emptyCells(size) {
@@ -87,32 +86,44 @@ window.MeowdokuGameState = (function (Validator) {
     }
   }
 
-  /** セルをタップしたときの状態遷移: empty -> cross -> cat -> empty */
-  function cycleCell(state, row, col) {
+  /** シングルタップ: empty <-> cross のみ切り替える（猫マスは無視） */
+  function toggleCross(state, row, col) {
+    if (state.cleared || state.gameOver) return state;
+
+    const current = state.cells[row][col];
+    if (current === "cat") return state;
+
+    state.history.push(cloneCells(state.cells));
+    state.cells[row][col] = current === "empty" ? "cross" : "empty";
+    return state;
+  }
+
+  /** ダブルタップ: 猫の設置・撤去を行う */
+  function toggleCat(state, row, col) {
     if (state.cleared || state.gameOver) return state;
 
     state.lastMistake = null;
     const current = state.cells[row][col];
-    const next = NEXT_STATE[current];
 
-    if (next === "cat") {
-      const trial = cloneCells(state.cells);
-      trial[row][col] = "cat";
-      if (isInvalidPlacement(state.puzzle, trial, row, col)) {
-        state.mistakes++;
-        state.lastMistake = { row, col };
-        if (state.mistakes >= MAX_MISTAKES) state.gameOver = true;
-        return state;
-      }
+    if (current === "cat") {
+      state.history.push(cloneCells(state.cells));
+      state.cells[row][col] = "empty";
+      state.cleared = Validator.isSolved(state.puzzle, state.cells);
+      return state;
+    }
+
+    const trial = cloneCells(state.cells);
+    trial[row][col] = "cat";
+    if (isInvalidPlacement(state.puzzle, trial, row, col)) {
+      state.mistakes++;
+      state.lastMistake = { row, col };
+      if (state.mistakes >= MAX_MISTAKES) state.gameOver = true;
+      return state;
     }
 
     state.history.push(cloneCells(state.cells));
-    state.cells[row][col] = next;
-
-    if (next === "cat") {
-      autoCross(state, row, col);
-    }
-
+    state.cells[row][col] = "cat";
+    autoCross(state, row, col);
     state.cleared = Validator.isSolved(state.puzzle, state.cells);
     return state;
   }
@@ -135,5 +146,5 @@ window.MeowdokuGameState = (function (Validator) {
     return state;
   }
 
-  return { createState, cycleCell, undo, reset, emptyCells, cloneCells, MAX_MISTAKES };
+  return { createState, toggleCross, toggleCat, undo, reset, emptyCells, cloneCells, MAX_MISTAKES };
 })(window.MeowdokuValidator);

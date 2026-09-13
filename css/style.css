@@ -131,26 +131,70 @@ body {
 }
 
 .cell.mistake {
-  animation: mistake-flash 0.5s ease;
+  animation: mistake-shake 0.45s ease;
 }
 
-@keyframes mistake-flash {
+@keyframes mistake-shake {
   0%,
   100% {
     background-color: var(--cell-bg, var(--color-surface));
+    transform: translateX(0);
   }
-  30% {
+  15% {
+    transform: translateX(-5px) rotate(-4deg);
+  }
+  35% {
     background-color: #ffb3b3;
+    transform: translateX(5px) rotate(4deg);
+  }
+  55% {
+    background-color: #ffb3b3;
+    transform: translateX(-4px) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(2deg);
   }
 }
 
 .cell .mark-cross {
   color: var(--color-cross);
   font-weight: 700;
+  display: inline-block;
+  animation: cross-pop 0.2s ease-out;
 }
 
 .cell .mark-cat {
   line-height: 1;
+  display: inline-block;
+  animation: cat-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cross-pop {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes cat-pop {
+  0% {
+    transform: scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.25) rotate(8deg);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .toolbar {
@@ -233,19 +277,110 @@ body {
 
 .clear-modal {
   text-align: center;
+  position: relative;
 }
 
 .clear-cat {
   font-size: 2.4rem;
-  animation: bounce 0.6s ease infinite alternate;
+  display: inline-block;
+  animation: cat-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes bounce {
+.clear-cat.happy {
+  animation: cat-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    wiggle-bounce 1s ease-in-out 0.4s infinite;
+}
+
+.clear-cat.sad {
+  animation: cat-pop-in 0.4s ease-out, sad-sway 2.2s ease-in-out 0.4s infinite;
+}
+
+@keyframes cat-pop-in {
   from {
-    transform: translateY(0);
+    transform: scale(0);
+    opacity: 0;
   }
   to {
-    transform: translateY(-8px);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes wiggle-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-6px) rotate(8deg);
+  }
+}
+
+@keyframes sad-sway {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-6deg) translateY(2px);
+  }
+}
+
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 1.1rem;
+  opacity: 0;
+  animation: sparkle-float 1.4s ease-in forwards;
+}
+
+.sparkle:nth-child(1) {
+  left: 10%;
+  top: 15%;
+  animation-delay: 0.1s;
+}
+
+.sparkle:nth-child(2) {
+  left: 82%;
+  top: 20%;
+  animation-delay: 0.35s;
+}
+
+.sparkle:nth-child(3) {
+  left: 20%;
+  top: 60%;
+  animation-delay: 0.6s;
+}
+
+.sparkle:nth-child(4) {
+  left: 78%;
+  top: 58%;
+  animation-delay: 0.85s;
+}
+
+@keyframes sparkle-float {
+  0% {
+    transform: translateY(0) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1) rotate(10deg);
+  }
+  100% {
+    transform: translateY(-36px) scale(0.8) rotate(-10deg);
+    opacity: 0;
   }
 }
 
