@@ -7,6 +7,7 @@
   const PUZZLES = window.MEOWDOKU_PUZZLES;
   const GameState = window.MeowdokuGameState;
   const Storage = window.MeowdokuStorage;
+  const Validator = window.MeowdokuValidator;
 
   const REGION_COLOR_COUNT = 8;
   const DOUBLE_TAP_MS = 300;
@@ -14,7 +15,8 @@
   const boardEl = document.getElementById("board");
   const levelLabelEl = document.getElementById("level-label");
   const timerEl = document.getElementById("timer");
-  const mistakesEl = document.getElementById("mistakes");
+  const catCounterEl = document.getElementById("cat-counter");
+  const heartsEl = document.getElementById("hearts");
   const undoBtn = document.getElementById("undo-btn");
   const resetBtn = document.getElementById("reset-btn");
   const levelSelectBtn = document.getElementById("level-select-btn");
@@ -54,6 +56,14 @@
 
   function getPuzzleById(id) {
     return PUZZLES.find((p) => p.id === id) || PUZZLES[0];
+  }
+
+  /** 未クリアの問題を優先してランダムに選ぶ（全部クリア済みなら完全ランダム） */
+  function pickRandomPuzzleId(excludeId) {
+    const others = PUZZLES.filter((p) => p.id !== excludeId);
+    const uncleared = others.filter((p) => !savedData.clearedPuzzleIds.includes(p.id));
+    const pool = uncleared.length > 0 ? uncleared : others.length > 0 ? others : PUZZLES;
+    return pool[Math.floor(Math.random() * pool.length)].id;
   }
 
   function persistCurrentProgress() {
@@ -98,13 +108,6 @@
         const regionId = puzzle.regions[row][col];
         cell.style.setProperty("--cell-bg", `var(--region-${regionId % REGION_COLOR_COUNT})`);
 
-        if (col < puzzle.size - 1 && puzzle.regions[row][col + 1] !== regionId) {
-          cell.classList.add("region-edge-right");
-        }
-        if (row < puzzle.size - 1 && puzzle.regions[row + 1][col] !== regionId) {
-          cell.classList.add("region-edge-bottom");
-        }
-
         cell.addEventListener("click", () => handleCellTap(row, col));
         boardEl.appendChild(cell);
         rowEls.push(cell);
@@ -145,7 +148,10 @@
 
     levelLabelEl.textContent = currentPuzzle.title;
     timerEl.textContent = formatTime(state.elapsedSeconds);
-    mistakesEl.textContent = `Miss: ${state.mistakes} / ${GameState.MAX_MISTAKES}`;
+    catCounterEl.textContent = `🐱 ${Validator.totalCats(state.cells)} / ${currentPuzzle.size}`;
+    const remainingLives = GameState.MAX_MISTAKES - state.mistakes;
+    heartsEl.textContent =
+      "❤️".repeat(Math.max(remainingLives, 0)) + "🤍".repeat(state.mistakes);
     undoBtn.disabled = state.history.length === 0;
 
     if (state.lastMistake) {
@@ -297,14 +303,7 @@
   });
 
   clearNextBtn.addEventListener("click", () => {
-    const idx = PUZZLES.findIndex((p) => p.id === currentPuzzle.id);
-    const next = PUZZLES[idx + 1];
-    if (next) {
-      loadPuzzle(next.id);
-    } else {
-      hideClearModal();
-      openLevelSelect();
-    }
+    loadPuzzle(pickRandomPuzzleId(currentPuzzle.id));
   });
 
   gameoverRetryBtn.addEventListener("click", () => {
@@ -321,6 +320,10 @@
     openLevelSelect();
   });
 
-  const initialId = getPuzzleById(savedData.currentPuzzleId).id;
+  const isFreshPlayer =
+    Object.keys(savedData.puzzleStates).length === 0 && savedData.clearedPuzzleIds.length === 0;
+  const initialId = isFreshPlayer
+    ? pickRandomPuzzleId(null)
+    : getPuzzleById(savedData.currentPuzzleId).id;
   loadPuzzle(initialId);
 })();
