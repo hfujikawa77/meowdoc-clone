@@ -16,6 +16,7 @@
 
     <div class="status-bar">
       <span id="level-label" class="level-label">Level 01</span>
+      <span id="mistakes" class="mistakes">Miss: 0 / 3</span>
       <span id="timer" class="timer">00:00</span>
     </div>
 
@@ -52,6 +53,18 @@
       <div class="modal-actions">
         <button id="clear-levels-btn" class="btn btn-secondary">Levels</button>
         <button id="clear-next-btn" class="btn btn-primary">Next Puzzle</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameover-overlay" class="overlay hidden">
+    <div class="modal clear-modal">
+      <div class="clear-cat" aria-hidden="true">😿</div>
+      <h2>GAME OVER</h2>
+      <p>ミスが3回になっちゃった。もう一度挑戦してね。</p>
+      <div class="modal-actions">
+        <button id="gameover-levels-btn" class="btn btn-secondary">Levels</button>
+        <button id="gameover-retry-btn" class="btn btn-primary">Retry</button>
       </div>
     </div>
   </div>

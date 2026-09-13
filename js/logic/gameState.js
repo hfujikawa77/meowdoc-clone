@@ -6,6 +6,7 @@ window.MeowdokuGameState = (function (Validator) {
   "use strict";
 
   const NEXT_STATE = { empty: "cross", cross: "cat", cat: "empty" };
+  const MAX_MISTAKES = 3;
 
   function emptyCells(size) {
     return Array.from({ length: size }, () => Array(size).fill("empty"));
@@ -20,14 +21,29 @@ window.MeowdokuGameState = (function (Validator) {
       ? cloneCells(savedPuzzleState.cells)
       : emptyCells(puzzle.size);
     const elapsedSeconds = savedPuzzleState ? savedPuzzleState.elapsedSeconds : 0;
+    const mistakes = savedPuzzleState ? savedPuzzleState.mistakes || 0 : 0;
 
     return {
       puzzle,
       cells,
       history: [],
       elapsedSeconds,
+      mistakes,
+      lastMistake: null,
       cleared: Validator.isSolved(puzzle, cells),
+      gameOver: mistakes >= MAX_MISTAKES,
     };
+  }
+
+  /** この猫の配置が行・列・エリアの重複、または隣接ルールに違反しているか */
+  function isInvalidPlacement(puzzle, cells, row, col) {
+    const regionId = puzzle.regions[row][col];
+    return (
+      !Validator.isRowValid(cells, row) ||
+      !Validator.isColumnValid(cells, col) ||
+      !Validator.isRegionValid(puzzle, cells, regionId) ||
+      Validator.hasAdjacentCats(cells)
+    );
   }
 
   function neighborsOf(size, row, col) {
@@ -73,12 +89,24 @@ window.MeowdokuGameState = (function (Validator) {
 
   /** セルをタップしたときの状態遷移: empty -> cross -> cat -> empty */
   function cycleCell(state, row, col) {
-    if (state.cleared) return state;
+    if (state.cleared || state.gameOver) return state;
 
-    state.history.push(cloneCells(state.cells));
-
+    state.lastMistake = null;
     const current = state.cells[row][col];
     const next = NEXT_STATE[current];
+
+    if (next === "cat") {
+      const trial = cloneCells(state.cells);
+      trial[row][col] = "cat";
+      if (isInvalidPlacement(state.puzzle, trial, row, col)) {
+        state.mistakes++;
+        state.lastMistake = { row, col };
+        if (state.mistakes >= MAX_MISTAKES) state.gameOver = true;
+        return state;
+      }
+    }
+
+    state.history.push(cloneCells(state.cells));
     state.cells[row][col] = next;
 
     if (next === "cat") {
@@ -100,9 +128,12 @@ window.MeowdokuGameState = (function (Validator) {
     state.cells = emptyCells(state.puzzle.size);
     state.history = [];
     state.elapsedSeconds = 0;
+    state.mistakes = 0;
+    state.lastMistake = null;
     state.cleared = false;
+    state.gameOver = false;
     return state;
   }
 
-  return { createState, cycleCell, undo, reset, emptyCells, cloneCells };
+  return { createState, cycleCell, undo, reset, emptyCells, cloneCells, MAX_MISTAKES };
 })(window.MeowdokuValidator);

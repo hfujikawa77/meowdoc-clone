@@ -13,9 +13,14 @@
   const boardEl = document.getElementById("board");
   const levelLabelEl = document.getElementById("level-label");
   const timerEl = document.getElementById("timer");
+  const mistakesEl = document.getElementById("mistakes");
   const undoBtn = document.getElementById("undo-btn");
   const resetBtn = document.getElementById("reset-btn");
   const levelSelectBtn = document.getElementById("level-select-btn");
+
+  const gameoverOverlay = document.getElementById("gameover-overlay");
+  const gameoverLevelsBtn = document.getElementById("gameover-levels-btn");
+  const gameoverRetryBtn = document.getElementById("gameover-retry-btn");
 
   const clearOverlay = document.getElementById("clear-overlay");
   const clearLevelText = document.getElementById("clear-level-text");
@@ -47,7 +52,13 @@
   function persistCurrentProgress() {
     if (!currentPuzzle || !state) return;
     savedData.currentPuzzleId = currentPuzzle.id;
-    Storage.savePuzzleState(savedData, currentPuzzle.id, state.cells, state.elapsedSeconds);
+    Storage.savePuzzleState(
+      savedData,
+      currentPuzzle.id,
+      state.cells,
+      state.elapsedSeconds,
+      state.mistakes
+    );
   }
 
   function stopTimer() {
@@ -58,7 +69,7 @@
   function startTimer() {
     stopTimer();
     timerInterval = setInterval(() => {
-      if (state.cleared) return;
+      if (state.cleared || state.gameOver) return;
       state.elapsedSeconds++;
       timerEl.textContent = formatTime(state.elapsedSeconds);
       persistCurrentProgress();
@@ -78,7 +89,7 @@
         cell.type = "button";
         cell.className = "cell";
         const regionId = puzzle.regions[row][col];
-        cell.style.background = `var(--region-${regionId % REGION_COLOR_COUNT})`;
+        cell.style.setProperty("--cell-bg", `var(--region-${regionId % REGION_COLOR_COUNT})`);
 
         if (col < puzzle.size - 1 && puzzle.regions[row][col + 1] !== regionId) {
           cell.classList.add("region-edge-right");
@@ -122,7 +133,18 @@
 
     levelLabelEl.textContent = currentPuzzle.title;
     timerEl.textContent = formatTime(state.elapsedSeconds);
+    mistakesEl.textContent = `Miss: ${state.mistakes} / ${GameState.MAX_MISTAKES}`;
     undoBtn.disabled = state.history.length === 0;
+
+    if (state.lastMistake) {
+      const { row, col } = state.lastMistake;
+      const cell = cellEls[row][col];
+      cell.classList.remove("mistake");
+      // reflow to restart the animation if the same cell mistakes twice in a row
+      void cell.offsetWidth;
+      cell.classList.add("mistake");
+      state.lastMistake = null;
+    }
   }
 
   function showClearModal() {
@@ -137,8 +159,16 @@
     clearOverlay.classList.add("hidden");
   }
 
+  function showGameOverModal() {
+    gameoverOverlay.classList.remove("hidden");
+  }
+
+  function hideGameOverModal() {
+    gameoverOverlay.classList.add("hidden");
+  }
+
   function onCellClick(row, col) {
-    if (state.cleared) return;
+    if (state.cleared || state.gameOver) return;
     GameState.cycleCell(state, row, col);
     render();
     persistCurrentProgress();
@@ -147,12 +177,16 @@
       stopTimer();
       Storage.markCleared(savedData, currentPuzzle.id, state.elapsedSeconds);
       showClearModal();
+    } else if (state.gameOver) {
+      stopTimer();
+      showGameOverModal();
     }
   }
 
   function loadPuzzle(id) {
     persistCurrentProgress();
     hideClearModal();
+    hideGameOverModal();
 
     currentPuzzle = getPuzzleById(id);
     const savedPuzzleState = savedData.puzzleStates[currentPuzzle.id];
@@ -164,8 +198,10 @@
     savedData.currentPuzzleId = currentPuzzle.id;
     Storage.save(savedData);
 
-    if (!state.cleared) startTimer();
+    if (!state.cleared && !state.gameOver) startTimer();
     else stopTimer();
+
+    if (state.gameOver) showGameOverModal();
   }
 
   function buildLevelGrid() {
@@ -230,6 +266,19 @@
       hideClearModal();
       openLevelSelect();
     }
+  });
+
+  gameoverRetryBtn.addEventListener("click", () => {
+    hideGameOverModal();
+    GameState.reset(state);
+    render();
+    persistCurrentProgress();
+    startTimer();
+  });
+
+  gameoverLevelsBtn.addEventListener("click", () => {
+    hideGameOverModal();
+    openLevelSelect();
   });
 
   const initialId = getPuzzleById(savedData.currentPuzzleId).id;

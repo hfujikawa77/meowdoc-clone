@@ -79,6 +79,12 @@ body {
   color: var(--color-accent-dark);
 }
 
+.status-bar .mistakes {
+  font-weight: 600;
+  color: var(--color-text-soft);
+  font-size: 0.9rem;
+}
+
 .board-wrap {
   display: flex;
   justify-content: center;
@@ -101,7 +107,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-surface);
+  background: var(--cell-bg, var(--color-surface));
   border: 1px solid rgba(74, 64, 56, 0.12);
   font-size: clamp(1.1rem, 5vw, 1.8rem);
   padding: 0;
@@ -122,6 +128,20 @@ body {
 
 .cell.region-edge-bottom {
   border-bottom: 3px solid var(--color-region-border);
+}
+
+.cell.mistake {
+  animation: mistake-flash 0.5s ease;
+}
+
+@keyframes mistake-flash {
+  0%,
+  100% {
+    background-color: var(--cell-bg, var(--color-surface));
+  }
+  30% {
+    background-color: #ffb3b3;
+  }
 }
 
 .cell .mark-cross {

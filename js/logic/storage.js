@@ -4,7 +4,7 @@
  * SavedData shape:
  * {
  *   currentPuzzleId: number,
- *   puzzleStates: { [puzzleId]: { cells: string[][], elapsedSeconds: number } },
+ *   puzzleStates: { [puzzleId]: { cells: string[][], elapsedSeconds: number, mistakes: number } },
  *   clearedPuzzleIds: number[],
  *   bestTimes: { [puzzleId]: number }
  * }
@@ -42,8 +42,8 @@ window.MeowdokuStorage = (function () {
     }
   }
 
-  function savePuzzleState(data, puzzleId, cells, elapsedSeconds) {
-    data.puzzleStates[puzzleId] = { cells, elapsedSeconds };
+  function savePuzzleState(data, puzzleId, cells, elapsedSeconds, mistakes) {
+    data.puzzleStates[puzzleId] = { cells, elapsedSeconds, mistakes };
     save(data);
   }
 
