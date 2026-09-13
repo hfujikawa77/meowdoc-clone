@@ -1,23 +1,23 @@
 :root {
-  --color-bg: #fbf7f0;
+  --color-bg: #faf9f5;
   --color-surface: #ffffff;
-  --color-text: #4a4038;
-  --color-text-soft: #8a7d70;
-  --color-border: #e8ddd0;
-  --color-accent: #e2895a;
-  --color-accent-dark: #c96f43;
-  --color-cross: #b9ada0;
-  --color-region-border: #4a4038;
-  --color-cell-selected-ring: #e2895a;
+  --color-text: #30291f;
+  --color-text-soft: #87796a;
+  --color-border: #e5e1d6;
+  --color-accent: #d97757;
+  --color-accent-dark: #bf6144;
+  --color-cross: #a89d8c;
+  --color-region-border: #30291f;
+  --color-cell-selected-ring: #d97757;
 
-  --region-0: #ffe3d1;
-  --region-1: #d8ecdf;
-  --region-2: #dde6f7;
-  --region-3: #fbe8f6;
-  --region-4: #fff6c9;
-  --region-5: #e4dcf7;
-  --region-6: #ffd9d9;
-  --region-7: #d6f2ef;
+  --region-0: #f3ddc9;
+  --region-1: #dbe6d9;
+  --region-2: #dbe2ea;
+  --region-3: #ecdce4;
+  --region-4: #f0e6c9;
+  --region-5: #dfdbe9;
+  --region-6: #ecd5cf;
+  --region-7: #d6e5e0;
 }
 
 * {
@@ -29,8 +29,8 @@ body {
   min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
-    "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Hiragino Kaku Gothic ProN", Meiryo, monospace;
   display: flex;
   justify-content: center;
   padding: 20px 16px 40px;
@@ -54,7 +54,23 @@ body {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-accent-dark);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.app-header h1::after {
+  content: "_";
+  color: var(--color-accent);
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 .status-bar {
@@ -108,7 +124,7 @@ body {
   align-items: center;
   justify-content: center;
   background: var(--cell-bg, var(--color-surface));
-  border: 1px solid rgba(74, 64, 56, 0.12);
+  border: 1px solid rgba(48, 41, 31, 0.12);
   font-size: clamp(1.1rem, 5vw, 1.8rem);
   padding: 0;
   cursor: pointer;
@@ -144,11 +160,11 @@ body {
     transform: translateX(-5px) rotate(-4deg);
   }
   35% {
-    background-color: #ffb3b3;
+    background-color: #e8a99a;
     transform: translateX(5px) rotate(4deg);
   }
   55% {
-    background-color: #ffb3b3;
+    background-color: #e8a99a;
     transform: translateX(-4px) rotate(-3deg);
   }
   75% {
@@ -242,7 +258,7 @@ body {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(74, 64, 56, 0.5);
+  background: rgba(48, 41, 31, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -439,7 +455,7 @@ body {
 
 .level-btn.current {
   border-color: var(--color-accent);
-  background: #fdf1e8;
+  background: #f7e6dc;
 }
 
 .level-btn .level-check {
