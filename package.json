@@ -1,0 +1,10 @@
+{
+  "name": "meowdoku",
+  "version": "1.0.0",
+  "description": "Meowdoku - a cat-placement logic puzzle. Static HTML/CSS/JS, no build step.",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "dev": "python3 -m http.server 8080"
+  }
+}

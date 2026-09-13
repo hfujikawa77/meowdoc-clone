@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Meowdoku</title>
+  <meta name="description" content="猫を配置するロジックパズル Meowdoku" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>🐱 Meowdoku</h1>
+    </header>
+
+    <div class="status-bar">
+      <span id="level-label" class="level-label">Level 01</span>
+      <span id="timer" class="timer">00:00</span>
+    </div>
+
+    <main class="board-wrap">
+      <div id="board" class="board" role="grid" aria-label="パズル盤面"></div>
+    </main>
+
+    <div class="toolbar">
+      <button id="undo-btn" class="btn btn-secondary" aria-label="ひとつ前に戻す">↶ Undo</button>
+      <button id="reset-btn" class="btn btn-secondary" aria-label="この問題をリセット">Reset</button>
+      <button id="level-select-btn" class="btn btn-secondary" aria-label="レベルを選択">Levels</button>
+    </div>
+
+    <footer class="app-footer">
+      <p>行・列・エリアに猫はちょうど1匹、猫同士は隣接禁止(斜め含む)</p>
+    </footer>
+  </div>
+
+  <div id="clear-overlay" class="overlay hidden">
+    <div class="modal clear-modal">
+      <div class="clear-cat" aria-hidden="true">🐱</div>
+      <h2>PURRFECT!</h2>
+      <p id="clear-level-text">Level 01 Clear!</p>
+      <div class="clear-stats">
+        <div>
+          <span class="label">Time</span>
+          <span id="clear-time" class="value">00:00</span>
+        </div>
+        <div>
+          <span class="label">Best</span>
+          <span id="clear-best" class="value">00:00</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="clear-levels-btn" class="btn btn-secondary">Levels</button>
+        <button id="clear-next-btn" class="btn btn-primary">Next Puzzle</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="level-overlay" class="overlay hidden">
+    <div class="modal">
+      <h2>Level Select</h2>
+      <p>クリア済みの問題には ✅ が付きます</p>
+      <div id="level-grid" class="level-grid"></div>
+      <div class="modal-actions" style="margin-top: 16px;">
+        <button id="level-close-btn" class="btn btn-secondary">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data/puzzles.js"></script>
+  <script src="js/logic/validator.js"></script>
+  <script src="js/logic/storage.js"></script>
+  <script src="js/logic/gameState.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
