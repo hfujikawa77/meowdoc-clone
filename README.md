@@ -45,10 +45,11 @@ npm test
 
 ## GitHub Pages への公開
 
-`.github/workflows/deploy-pages.yml` が `main` ブランチへの push をトリガーに GitHub Pages へ自動デプロイします。
+ビルドステップが無い完全静的サイトなので、GitHub Actions を使わずブランチから直接公開できます。
 
-1. リポジトリの Settings → Pages → Source を **GitHub Actions** に設定してください。
-2. `main` ブランチに push すると自動的に公開されます。
+1. リポジトリの Settings → Pages → Source を **Deploy from a branch** に設定してください。
+2. Branch に公開したいブランチ（例: `main`）と `/ (root)` を選択して Save してください。
+3. 数分後に `https://<username>.github.io/<repo>/` で公開されます。
 
 ## ファイル構成
 
@@ -61,7 +62,6 @@ js/logic/gameState.js         盤面の状態管理・Undo・自動×
 js/logic/storage.js           localStorage 永続化
 js/main.js                    UI制御・イベント処理
 tests/validator.test.js       validator.js の単体テスト
-.github/workflows/            GitHub Pages デプロイ設定
 ```
 
 ## 今後の拡張候補
