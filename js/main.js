@@ -259,11 +259,12 @@
       const cleared = savedData.clearedPuzzleIds.includes(puzzle.id);
       btn.setAttribute(
         "aria-label",
-        `${puzzle.title}${cleared ? " クリア済み" : ""}`
+        `${puzzle.title} ${puzzle.size}x${puzzle.size}${cleared ? " クリア済み" : ""}`
       );
       btn.innerHTML = `
         <span class="level-check">${cleared ? "✅" : "🐾"}</span>
         <span>${String(puzzle.id).padStart(2, "0")}</span>
+        <span class="level-size">${puzzle.size}×${puzzle.size}</span>
       `;
       btn.addEventListener("click", () => {
         levelOverlay.classList.add("hidden");

@@ -493,6 +493,12 @@ body {
   font-size: 0.9rem;
 }
 
+.level-btn .level-size {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--color-text-soft);
+}
+
 @media (max-width: 380px) {
   .level-grid {
     grid-template-columns: repeat(3, 1fr);
