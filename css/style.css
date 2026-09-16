@@ -154,9 +154,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   background: var(--cell-bg, var(--color-surface));
   border-radius: 10px;
   font-size: clamp(1.3rem, 6vw, 2.1rem);
+  line-height: 1;
   padding: 0;
   cursor: pointer;
   color: var(--color-text);

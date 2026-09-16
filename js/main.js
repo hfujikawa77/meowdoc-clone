@@ -95,8 +95,8 @@
 
   function buildBoardDom(puzzle) {
     boardEl.innerHTML = "";
-    boardEl.style.gridTemplateColumns = `repeat(${puzzle.size}, 1fr)`;
-    boardEl.style.gridTemplateRows = `repeat(${puzzle.size}, 1fr)`;
+    boardEl.style.gridTemplateColumns = `repeat(${puzzle.size}, minmax(0, 1fr))`;
+    boardEl.style.gridTemplateRows = `repeat(${puzzle.size}, minmax(0, 1fr))`;
     cellEls = [];
 
     for (let row = 0; row < puzzle.size; row++) {
