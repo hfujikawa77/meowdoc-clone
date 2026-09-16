@@ -45,47 +45,6 @@ window.MeowdokuGameState = (function (Validator) {
     );
   }
 
-  function neighborsOf(size, row, col) {
-    const result = [];
-    for (let dr = -1; dr <= 1; dr++) {
-      for (let dc = -1; dc <= 1; dc++) {
-        if (dr === 0 && dc === 0) continue;
-        const r = row + dr;
-        const c = col + dc;
-        if (r >= 0 && r < size && c >= 0 && c < size) result.push([r, c]);
-      }
-    }
-    return result;
-  }
-
-  /** 猫を置いたときに、同じ行・列・エリア・周囲8マスを自動で×にする */
-  function autoCross(state, row, col) {
-    const { puzzle, cells } = state;
-    const size = puzzle.size;
-    const regionId = puzzle.regions[row][col];
-
-    for (let c = 0; c < size; c++) {
-      if (c !== col && cells[row][c] === "empty") cells[row][c] = "cross";
-    }
-    for (let r = 0; r < size; r++) {
-      if (r !== row && cells[r][col] === "empty") cells[r][col] = "cross";
-    }
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        if (
-          puzzle.regions[r][c] === regionId &&
-          !(r === row && c === col) &&
-          cells[r][c] === "empty"
-        ) {
-          cells[r][c] = "cross";
-        }
-      }
-    }
-    for (const [r, c] of neighborsOf(size, row, col)) {
-      if (cells[r][c] === "empty") cells[r][c] = "cross";
-    }
-  }
-
   /** シングルタップ: empty <-> cross のみ切り替える（猫マスは無視） */
   function toggleCross(state, row, col) {
     if (state.cleared || state.gameOver) return state;
@@ -123,7 +82,6 @@ window.MeowdokuGameState = (function (Validator) {
 
     state.history.push(cloneCells(state.cells));
     state.cells[row][col] = "cat";
-    autoCross(state, row, col);
     state.cleared = Validator.isSolved(state.puzzle, state.cells);
     return state;
   }

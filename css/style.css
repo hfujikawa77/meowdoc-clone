@@ -156,7 +156,7 @@ body {
   justify-content: center;
   background: var(--cell-bg, var(--color-surface));
   border-radius: 10px;
-  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  font-size: clamp(1.3rem, 6vw, 2.1rem);
   padding: 0;
   cursor: pointer;
   color: var(--color-text);
@@ -196,9 +196,10 @@ body {
 }
 
 .cell .mark-cross {
-  color: var(--color-text);
-  font-weight: 700;
-  font-size: 1.2em;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.7em;
+  text-shadow: 0 1px 2px rgba(48, 41, 31, 0.4), 0 0 3px rgba(48, 41, 31, 0.3);
   display: inline-block;
   animation: cross-pop 0.2s ease-out;
 }

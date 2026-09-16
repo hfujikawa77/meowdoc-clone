@@ -18,7 +18,7 @@ GitHub Pages: リポジトリの Settings → Pages を有効化すると `https
 - シングルタップ（クリック）: `空欄 ⇄ ×` を切り替える
 - ダブルタップ（素早い連続クリック）: 猫を設置・撤去する
 
-時間を置いた2回のシングルタップはダブルタップとして扱われません。猫を置くと、明らかに置けなくなる周辺マス（同じ行・列・エリア・隣接8マス）が自動で × になります。
+時間を置いた2回のシングルタップはダブルタップとして扱われません。× 付けは自動化されておらず、ユーザー自身がすべて手動で付ける方式です。
 
 ルールに違反する場所（行・列・エリアの重複、または隣接）に猫を置こうとするとミスになります。ミスが3回になるとゲームオーバーで、Retry で同じ問題を最初からやり直せます。
 
@@ -65,7 +65,7 @@ index.html                    エントリーポイント（SPA）
 css/style.css                 スタイル（猫テーマ、レスポンシブ対応）
 js/data/puzzles.js            パズルデータ（5x5 x15 / 6x6 x5 / 7x7 x5 / 8x8 x5、計30問）
 js/logic/validator.js         ルール検証ロジック（UI非依存）
-js/logic/gameState.js         盤面の状態管理・Undo・自動×
+js/logic/gameState.js         盤面の状態管理・Undo
 js/logic/storage.js           localStorage 永続化
 js/main.js                    UI制御・イベント処理
 tests/validator.test.js       validator.js の単体テスト
