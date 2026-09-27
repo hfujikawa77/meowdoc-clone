@@ -10,14 +10,14 @@
   --color-region-border: #30291f;
   --color-cell-selected-ring: #d97757;
 
-  --region-0: #e0916a;
-  --region-1: #6fae94;
-  --region-2: #6d8fac;
-  --region-3: #b6607f;
-  --region-4: #d7ac48;
-  --region-5: #9081bd;
-  --region-6: #c97b86;
-  --region-7: #7aac82;
+  --region-0: #d97a4a;
+  --region-1: #4f9e80;
+  --region-2: #4f7c9e;
+  --region-3: #a8466a;
+  --region-4: #d4a02c;
+  --region-5: #7c68b0;
+  --region-6: #c05c72;
+  --region-7: #5c9e6c;
 }
 
 * {
